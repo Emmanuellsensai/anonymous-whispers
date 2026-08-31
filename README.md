@@ -4,6 +4,8 @@
 
 > Submit an anonymous report on Midnight. Prove you did. Reveal nothing.
 
+This project is built on the Midnight Network.
+
 ## Live Demo
 
 `<placeholder: TBD, live Vercel URL>`
