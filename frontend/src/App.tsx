@@ -1,15 +1,47 @@
-import { useCallback, useState } from 'react';
+import { Suspense, lazy, useCallback, useState } from 'react';
 import { BrowserRouter, Link, Route, Routes, useLocation } from 'react-router-dom';
 
 import { Logo } from './components/landing/Logo';
 import { WalletConnect, type WalletConnection } from './components/WalletConnect';
-import { CONTRACT_ADDRESS, NETWORK_ID } from '@anonymous-whispers/sdk';
-import { DeployContract } from './pages/DeployContract';
-import { Inbox } from './pages/Inbox';
 import { Landing } from './pages/Landing';
-import { Report } from './pages/Report';
+
+// Kept in sync with sdk/src/chain.ts, README.md Contract Address table, and
+// PROGRESS.md. Inlined here so that a visitor to the landing page (/) does
+// not pay the transitive cost of importing the SDK barrel, which pulls
+// chain.ts and the ~11MB Midnight WASM stack via its module graph. The
+// route chunks below still import the SDK; only the app shell does not.
+const NETWORK_ID = 'preprod';
+const CONTRACT_ADDRESS =
+  '0b24b5da3eaf66860c1b69a6d31f3e86089b5c4af48c2dc4be6f6c5b7f4b34f5';
+
+// Lazy so the Midnight WASM stack (~11MB, pulled transitively via the SDK)
+// only downloads when a user actually navigates to a page that needs it.
+// Landing (/) stays in the initial chunk because it is the first thing every
+// visitor sees; splitting it out would trade one landing-page fetch for two.
+const Report = lazy(() =>
+  import('./pages/Report').then((m) => ({ default: m.Report })),
+);
+const Inbox = lazy(() =>
+  import('./pages/Inbox').then((m) => ({ default: m.Inbox })),
+);
+const DeployContract = lazy(() =>
+  import('./pages/DeployContract').then((m) => ({ default: m.DeployContract })),
+);
 
 const EXPLORER_CONTRACT_URL = `https://${NETWORK_ID}.midnightexplorer.com/contracts/${CONTRACT_ADDRESS}`;
+
+/**
+ * Placeholder shown while a lazy route chunk (and the Midnight WASM it pulls)
+ * is downloading. Matches the app's monochrome idiom so it does not flash a
+ * spinner against the black background.
+ */
+function RouteFallback() {
+  return (
+    <section className="surface-dark-empty p-10">
+      <p className="text-base text-white/55">Loading...</p>
+    </section>
+  );
+}
 
 /**
  * Shared chrome around every route. Wallet connection state lives here so
@@ -51,11 +83,13 @@ function Shell() {
         </header>
 
         <main className="mt-14 flex flex-col gap-8">
-          <Routes>
-            <Route path="/report" element={<Report connection={connection} />} />
-            <Route path="/inbox" element={<Inbox connection={connection} />} />
-            <Route path="/deploy" element={<DeployContract connection={connection} />} />
-          </Routes>
+          <Suspense fallback={<RouteFallback />}>
+            <Routes>
+              <Route path="/report" element={<Report connection={connection} />} />
+              <Route path="/inbox" element={<Inbox connection={connection} />} />
+              <Route path="/deploy" element={<DeployContract connection={connection} />} />
+            </Routes>
+          </Suspense>
         </main>
 
         <footer className="mt-auto pt-16">
