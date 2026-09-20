@@ -17,13 +17,18 @@ const truncateKey = (hex: string) => `${hex.slice(0, 6)}...${hex.slice(-4)}`;
 
 export function Report({ connection }: Props) {
   const [state, setState] = useState<PublicState | null>(null);
-  const [loading, setLoading] = useState(true);
+  // everLoaded flips true after the first successful (or failed) fetch and
+  // never flips back. Bumping refreshToken after a submission then re-fetches
+  // silently in the background, without unmounting the form beneath — the
+  // previous version toggled a `loading` flag on every refresh, which tore
+  // down EncryptedReportForm and destroyed its 'done' phase (the tx hash
+  // panel) before the user could see it.
+  const [everLoaded, setEverLoaded] = useState(false);
   const [refreshToken, setRefreshToken] = useState(0);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
-    setLoading(true);
     readPublicState()
       .then((next) => {
         if (!cancelled) setState(next);
@@ -32,12 +37,14 @@ export function Report({ connection }: Props) {
         if (!cancelled) setState(null);
       })
       .finally(() => {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) setEverLoaded(true);
       });
     return () => {
       cancelled = true;
     };
   }, [refreshToken]);
+
+  const loading = !everLoaded;
 
   const handleSubmitted = useCallback(() => setRefreshToken((token) => token + 1), []);
 
