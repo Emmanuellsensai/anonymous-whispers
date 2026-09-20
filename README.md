@@ -79,6 +79,43 @@ the recipient. That combination of public verifiability and selective
 disclosure isn't available on a fully transparent chain, where posting even
 encrypted blobs from a normal account leaks the transaction graph.
 
+## Repository Structure
+
+Monorepo, three npm workspaces plus docs:
+
+| Path | Contents |
+|------|----------|
+| `contract/` | Compact contract (`src/anonymous-whispers.compact`), managed artifacts, circuit tests, deploy scripts |
+| `sdk/` | `@anonymous-whispers/sdk` - chain client, envelope crypto, wallet provider, keys |
+| `frontend/` | React 19 + Vite dApp: `/report`, `/inbox`, `/deploy` pages |
+| `docs/` | `USAGE.md`, `FEEDBACK.md` (Level 5 log), `OUTREACH.md` (Level 5 templates), architecture diagram |
+| `.github/workflows/` | CI: sdk, frontend, contract jobs on Node 22 |
+| `USERS.md` | Level 5 Preprod user list with on-chain verification instructions |
+| `PROPOSAL.md` | Full product proposal, threat model, Mainnet feasibility |
+| `PROGRESS.md` | Level-by-level engineering log |
+
+## Level 5 - User Validation
+
+- **Target:** 50 Preprod users with verifiable on-chain evidence
+- **Current:** 0 / 50 (updated as users come in)
+- Wallet addresses and tx hashes: [`USERS.md`](./USERS.md)
+- Feedback log, themes, and changes: [`docs/FEEDBACK.md`](docs/FEEDBACK.md)
+- Outreach templates and Google Form draft: [`docs/OUTREACH.md`](docs/OUTREACH.md)
+
+Because Anonymous Whispers deliberately unlinks wallets from report content,
+`USERS.md` records each user's wallet **plus** the tx hash of their call to
+`submit_encrypted_report` (or `register_recipient`). A judge can open any tx
+hash on the Midnight Preprod explorer and confirm the wallet interacted with
+this contract, without breaking the privacy model. See the "How To Verify
+These Users" section in `USERS.md` for the exact procedure.
+
+## Feedback & Iterations
+
+User feedback drives this level's changes. The raw log, themes, and the
+changes each theme drove are tracked in [`docs/FEEDBACK.md`](docs/FEEDBACK.md).
+
+**Top 3 changes from user feedback:** (filled in after feedback is collected)
+
 ## Architecture
 
 ![Anonymous Whispers architecture](docs/architecture.svg)
