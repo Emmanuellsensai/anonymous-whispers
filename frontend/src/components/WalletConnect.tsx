@@ -71,6 +71,25 @@ const findPreferredWallet = (wallets: InitialAPI[]): InitialAPI | undefined => {
 const truncateAddress = (address: string): string =>
   address.length <= 22 ? address : `${address.slice(0, 12)}...${address.slice(-4)}`;
 
+/**
+ * Chrome kills the wallet extension's background service worker after ~30
+ * seconds of inactivity. When it does, the ConnectedAPI our page still holds
+ * is a live JS object bound to a dead channel: the next call throws with a
+ * message like "Remote API with channel 'midnight-wallet' was shutdown:
+ * object can no longer be used." The user is told nothing sensible unless
+ * we translate the message. Match both the "was shutdown" and "no longer be
+ * used" phrasings; a future wallet build could reword one and not the other.
+ */
+const isChannelShutdown = (error: unknown): boolean => {
+  if (!(error instanceof Error)) return false;
+  const message = error.message.toLowerCase();
+  return (
+    message.includes('was shutdown') ||
+    message.includes('no longer be used') ||
+    message.includes('channel closed')
+  );
+};
+
 export function WalletConnect({ connection, onConnect, onDisconnect }: Props) {
   const [status, setStatus] = useState<Status>({ kind: 'idle' });
   const [wallets, setWallets] = useState<InitialAPI[]>([]);
@@ -187,6 +206,17 @@ export function WalletConnect({ connection, onConnect, onDisconnect }: Props) {
       setStatus({ kind: 'idle' });
       onConnect({ api, address: unshieldedAddress });
     } catch (error) {
+      if (isChannelShutdown(error)) {
+        // The extension's background worker was killed between connect() and
+        // the follow-up call. The api reference is now unusable. Prompt the
+        // user to reconnect rather than showing the raw wallet error string.
+        setStatus({
+          kind: 'error',
+          message: 'Wallet session dropped.',
+          hint: 'Your wallet extension went to sleep. Click "Connect wallet" again to retry — no need to refresh.',
+        });
+        return;
+      }
       setStatus({
         kind: 'error',
         message: 'Could not read wallet details.',
