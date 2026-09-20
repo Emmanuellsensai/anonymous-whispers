@@ -13,6 +13,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import type { WalletConnection } from '../components/WalletConnect';
+import { TxHashPanel } from '../components/TxHashPanel';
 import {
   bytesToHex,
   connectToContract,
@@ -349,12 +350,10 @@ export function Inbox({ connection }: Props) {
       {showImport && importPanel}
 
       {registerPhase.kind === 'done' && (
-        <div className="surface-dark px-7 py-5">
-          <p className="eyebrow eyebrow-dark">recipient key registered on-chain</p>
-          <p className="mono mt-2.5 text-sm break-all text-white/80">
-            {registerPhase.txId}
-          </p>
-        </div>
+        <TxHashPanel
+          txId={registerPhase.txId}
+          hint="Your recipient key is registered on-chain. Paste this tx hash into the feedback form as your on-chain evidence."
+        />
       )}
 
       {keyMatchesChain === false && (

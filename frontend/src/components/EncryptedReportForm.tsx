@@ -21,6 +21,7 @@ import {
 } from '@anonymous-whispers/sdk';
 
 import { fullErrorText } from '../lib/errorText';
+import { TxHashPanel } from './TxHashPanel';
 
 type Props = {
   api: ConnectedAPI;
@@ -161,12 +162,10 @@ export function EncryptedReportForm({ api, address, recipientPublicKey, onSubmit
           </p>
         </div>
 
-        <div>
-          <p className="text-sm text-white/50">Transaction</p>
-          <p className="mono mt-2 text-sm leading-relaxed break-all text-white/70">
-            {phase.txId}
-          </p>
-        </div>
+        <TxHashPanel
+          txId={phase.txId}
+          hint="This is the on-chain evidence that your wallet called our contract. Paste it into the feedback form. It is different from the ciphertext hash above: that hash commits to your message; the tx hash identifies your submission on the Preprod ledger."
+        />
 
         <p className="flex items-center gap-3 border-t border-white/10 pt-6 text-base font-medium text-white">
           <svg viewBox="0 0 20 20" fill="none" className="size-6 shrink-0" aria-hidden="true">
