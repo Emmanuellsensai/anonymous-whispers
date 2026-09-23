@@ -8,24 +8,24 @@
 import { useCallback, useState } from 'react';
 
 type Props = {
-  txId: string;
+  txHash: string;
   /** Extra sentence shown under the hash. Use to distinguish flows. */
   hint?: string;
 };
 
-export function TxHashPanel({ txId, hint }: Props) {
+export function TxHashPanel({ txHash, hint }: Props) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = useCallback(async () => {
     try {
-      await navigator.clipboard.writeText(txId);
+      await navigator.clipboard.writeText(txHash);
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1500);
     } catch {
       // Clipboard may be blocked (permissions, insecure context). The hash is
       // still visible on screen for manual copy, so no fallback needed here.
     }
-  }, [txId]);
+  }, [txHash]);
 
   return (
     <div className="surface-dark flex flex-col gap-4 p-6">
@@ -41,7 +41,7 @@ export function TxHashPanel({ txId, hint }: Props) {
           {copied ? 'Copied' : 'Copy tx hash'}
         </button>
       </div>
-      <p className="mono text-sm leading-relaxed break-all text-white">{txId}</p>
+      <p className="mono text-sm leading-relaxed break-all text-white">{txHash}</p>
       <p
         className="text-sm leading-relaxed"
         style={{ color: 'var(--muted-dark)' }}

@@ -73,7 +73,7 @@ const downloadKeys = (keys: ExportedRecipientKeys) => {
 type RegisterPhase =
   | { kind: 'idle' }
   | { kind: 'submitting' }
-  | { kind: 'done'; txId: string }
+  | { kind: 'done'; txHash: string }
   | { kind: 'error'; message: string };
 
 const errorText = (error: unknown): string =>
@@ -118,7 +118,7 @@ export function Inbox({ connection }: Props) {
       const tx = await level3CallTx(contract).register_recipient(publicKey);
       storeKeys(generated);
       setStoredKeys(generated);
-      setRegisterPhase({ kind: 'done', txId: tx.public.txId });
+      setRegisterPhase({ kind: 'done', txHash: tx.public.txHash });
       refreshState();
     } catch (error) {
       console.error('register_recipient failed:', error);
@@ -351,7 +351,7 @@ export function Inbox({ connection }: Props) {
 
       {registerPhase.kind === 'done' && (
         <TxHashPanel
-          txId={registerPhase.txId}
+          txHash={registerPhase.txHash}
           hint="Your recipient key is registered on-chain. Paste this tx hash into the feedback form as your on-chain evidence."
         />
       )}

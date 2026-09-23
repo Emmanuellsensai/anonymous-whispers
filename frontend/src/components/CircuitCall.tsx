@@ -26,7 +26,7 @@ type Props = {
 type Phase =
   | { kind: 'idle' }
   | { kind: 'proving'; hash: string }
-  | { kind: 'done'; hash: string; txId: string }
+  | { kind: 'done'; hash: string; txHash: string }
   | { kind: 'error'; message: string };
 
 const HEX = '0123456789abcdef';
@@ -147,7 +147,7 @@ export function CircuitCall({ api, address, onSubmitted }: Props) {
       // witness. The circuit derives the on-chain hash from it in-circuit.
       const tx = await contract.callTx.submit_report(reportContent);
 
-      setPhase({ kind: 'done', hash, txId: tx.public.txId });
+      setPhase({ kind: 'done', hash, txHash: tx.public.txHash });
       onSubmitted();
     } catch (error) {
       // The raw object, not a string: DevTools renders it as an expandable
@@ -192,7 +192,7 @@ export function CircuitCall({ api, address, onSubmitted }: Props) {
         <div>
           <p className="text-sm text-muted">Transaction</p>
           <p className="mt-1.5 font-mono text-sm leading-relaxed break-all text-dim">
-            {phase.txId}
+            {phase.txHash}
           </p>
         </div>
 

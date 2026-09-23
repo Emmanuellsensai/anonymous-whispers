@@ -33,7 +33,7 @@ type Props = {
 type Phase =
   | { kind: 'idle' }
   | { kind: 'proving'; hash: string }
-  | { kind: 'done'; hash: string; txId: string }
+  | { kind: 'done'; hash: string; txHash: string }
   | { kind: 'error'; message: string };
 
 const HEX = '0123456789abcdef';
@@ -122,7 +122,7 @@ export function EncryptedReportForm({ api, address, recipientPublicKey, onSubmit
       // ledger input — the chain never sees these bytes.
       const tx = await level3CallTx(contract).submit_encrypted_report(envelope, plaintext);
 
-      setPhase({ kind: 'done', hash, txId: tx.public.txId });
+      setPhase({ kind: 'done', hash, txHash: tx.public.txHash });
       onSubmitted();
     } catch (error) {
       console.error('submit_encrypted_report failed:', error);
@@ -163,7 +163,7 @@ export function EncryptedReportForm({ api, address, recipientPublicKey, onSubmit
         </div>
 
         <TxHashPanel
-          txId={phase.txId}
+          txHash={phase.txHash}
           hint="This is the on-chain evidence that your wallet called our contract. Paste it into the feedback form. It is different from the ciphertext hash above: that hash commits to your message; the tx hash identifies your submission on the Preprod ledger."
         />
 
