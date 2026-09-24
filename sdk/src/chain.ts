@@ -272,7 +272,7 @@ export const deployWhispersContract = async (api: ConnectedAPI, accountId: strin
 };
 
 /** The slice of a callTx result the UI consumes. */
-type CallTxOutcome = { public: { txId: string } };
+type CallTxOutcome = { public: { txId: string; txHash: string } };
 
 /**
  * Level 3 circuit calls, typed structurally.
