@@ -97,7 +97,7 @@ Monorepo, three npm workspaces plus docs:
 ## Level 5 - User Validation
 
 - **Target:** 50 Preprod users with verifiable on-chain evidence
-- **Current:** 0 / 50 (updated as users come in)
+- **Current:** 51 / 50 (target reached)
 - Wallet addresses and tx hashes: [`USERS.md`](./USERS.md)
 - Feedback log, themes, and changes: [`docs/FEEDBACK.md`](docs/FEEDBACK.md)
 - Outreach templates and Google Form draft: [`docs/OUTREACH.md`](docs/OUTREACH.md)
@@ -111,10 +111,28 @@ These Users" section in `USERS.md` for the exact procedure.
 
 ## Feedback & Iterations
 
-User feedback drives this level's changes. The raw log, themes, and the
-changes each theme drove are tracked in [`docs/FEEDBACK.md`](docs/FEEDBACK.md).
+User feedback drives this level's changes. We collected 51 responses through a
+Google Form ([`docs/FEEDBACK.md`](docs/FEEDBACK.md) has the raw log, themes, and
+changes). 46 of 51 users said the app worked as expected and 40 said they would
+use it again; the actionable signal came from a few repeated issues.
 
-**Top 3 changes from user feedback:** (filled in after feedback is collected)
+**Top 3 changes from user feedback:**
+
+1. **Wallet no longer auto-picks the wrong extension.** 3 users with both 1am
+   and Lace installed hit the wrong wallet on connect. The auto-pick now
+   prefers 1am, and channel-shutdown errors show a clear reconnect prompt
+   (`1d04ab5`, `45d0616`).
+2. **The report form no longer resets after submit.** 3 users had the form
+   clear during the post-submit ledger refresh and had to redo it. The form
+   now stays mounted through the refresh (`2b2e064`).
+3. **Faster first load and instant navigation.** 2 users found the landing
+   page slow on first open. Routes are code-split so landing does not ship the
+   Midnight WASM, and the app-route chunks preload on idle so opening Report or
+   Inbox is instant (`eb7db0b` plus the idle route-preload commit).
+
+Bonus: a copyable tx hash panel now appears after submit and register, showing
+the real transaction hash instead of the internal ZK identifier, in response to
+a user asking for an easy way to copy it (`01e1947`, `6901b94`).
 
 ## Architecture
 
