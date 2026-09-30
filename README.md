@@ -10,7 +10,9 @@ This project is built on the Midnight Network.
 
 [https://anonymous-whispers.vercel.app](https://anonymous-whispers.vercel.app)
 
-▶ Watch the demo: [https://youtu.be/E-LLLA5J6iY](https://youtu.be/E-LLLA5J6iY)
+▶ Watch the Level 5 demo: **[PASTE LEVEL 5 VIDEO URL HERE]**
+
+(Earlier Level 4 walkthrough: [https://youtu.be/E-LLLA5J6iY](https://youtu.be/E-LLLA5J6iY))
 
 ## Contract Address
 
@@ -57,7 +59,7 @@ reporting to funders, and journalism source protection.
 - 512-byte fixed-shape sealed envelope (no metadata leak via ciphertext size)
 - Only the recipient's secret key can decrypt: not us, not Midnight
 - Reusable `@anonymous-whispers/sdk` workspace package consumed by the sample app
-- Fingerprint verification path for reporters (planned, L5)
+- Fingerprint verification path for reporters (see Future Scope)
 
 ## What This Product Does
 
@@ -275,21 +277,22 @@ for both reporters and organizations.
 
 ## Future Scope
 
+Roadmap beyond the current MVP, not commitments for any specific level:
+
 - Owner-gated `register_recipient` with reporter-visible rotation detection,
   so a legitimate key rotation is distinguishable from a hostile overwrite
-  (L4/L5)
-- Inbox pagination as submission volume grows (L4)
+- Inbox pagination as submission volume grows
 - Threshold decryption across a board rather than a single recipient key, so
-  no individual can read reports alone or be a single point of failure (L5)
-- Rate limiting / spam economics for the submission list (L5)
+  no individual can read reports alone or be a single point of failure
+- Rate limiting / spam economics for the submission list
 - Fingerprint verification UI so reporters can check the registered key
-  against an out-of-band published fingerprint before encrypting (L5)
+  against an out-of-band published fingerprint before encrypting
 - Hosted onboarding and a documented escalation path for the case where the
-  registered recipient is complicit (L6)
+  registered recipient is complicit
 - A second sample app in a different domain (e.g. healthcare incident
-  reporting) to prove the SDK is reusable beyond this one product (L6)
-- Publish `@anonymous-whispers/sdk` as a standalone npm package (post-L6,
-  currently an unpublished workspace package)
+  reporting) to prove the SDK is reusable beyond this one product
+- Publish `@anonymous-whispers/sdk` as a standalone npm package (currently an
+  unpublished workspace package)
 
 ## Product Proposal
 
