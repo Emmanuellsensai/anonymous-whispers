@@ -51,6 +51,11 @@ export function HeroBackground({ reducedMotion }: { reducedMotion: boolean }) {
           loop
           muted
           playsInline
+          // preload="metadata" tells the browser to fetch dimensions and the
+          // first frame only; the body streams once autoPlay actually starts,
+          // which keeps the video off the initial page-load critical path.
+          // The poster JPEG covers the gap so the hero is never blank.
+          preload="metadata"
           poster={POSTER_SRC}
           src={VIDEO_SRC}
           aria-hidden="true"

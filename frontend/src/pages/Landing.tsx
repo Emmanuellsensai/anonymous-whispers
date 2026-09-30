@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect } from 'react';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 import { Hero } from '../components/landing/Hero';
@@ -11,6 +11,18 @@ import { TwoDoors } from '../components/landing/TwoDoors';
 import { UseCases } from '../components/landing/UseCases';
 import { useLenis } from '../hooks/useLenis';
 import { useReducedMotion } from '../hooks/useReducedMotion';
+
+/**
+ * Warm the /report and /inbox route chunks (and the ~11MB Midnight WASM stack
+ * they pull) in the background as soon as landing has painted. When the user
+ * then clicks "Report" or "Inbox" from TwoDoors, the chunks are already in the
+ * cache and the Suspense fallback in App.tsx never appears. Idempotent: repeat
+ * calls to the same dynamic import are deduplicated by the browser.
+ */
+const preloadAppRoutes = () => {
+  void import('./Report');
+  void import('./Inbox');
+};
 
 /**
  * The immersive landing page. Rendered outside the app Shell (see App.tsx):
@@ -29,6 +41,20 @@ export function Landing() {
     useReducedMotion() || new URLSearchParams(window.location.search).has('rm');
   // Lenis drives the page; ScrollTrigger has to be told when it moves.
   const lenisRef = useLenis(() => ScrollTrigger.update());
+
+  // Warm the app-route chunks on idle so TwoDoors -> /report or /inbox is
+  // instant. requestIdleCallback keeps this off the initial paint budget;
+  // the setTimeout fallback covers Safari, which does not implement it.
+  useEffect(() => {
+    const w = window as typeof window & {
+      requestIdleCallback?: (cb: () => void) => number;
+    };
+    if (typeof w.requestIdleCallback === 'function') {
+      w.requestIdleCallback(preloadAppRoutes);
+    } else {
+      window.setTimeout(preloadAppRoutes, 1500);
+    }
+  }, []);
 
   const jumpTo = useCallback(
     (id: string) => {
