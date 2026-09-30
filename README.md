@@ -12,8 +12,6 @@ This project is built on the Midnight Network.
 
 ▶ Watch the Level 5 demo: [https://youtu.be/KVcTprc7drc](https://youtu.be/KVcTprc7drc)
 
-(Earlier Level 4 walkthrough: [https://youtu.be/E-LLLA5J6iY](https://youtu.be/E-LLLA5J6iY))
-
 ## Contract Address
 
 | Network | Address |
